@@ -14,10 +14,7 @@ app.use(express.json()); // To parse JSON bodies
 // Database Connection
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        await mongoose.connect(process.env.MONGODB_URI); // Simplified connection without deprecated options
         console.log('Connected to MongoDB');
     } catch (err) {
         console.error('MongoDB connection error:', err.message);
