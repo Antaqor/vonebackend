@@ -1,25 +1,27 @@
-require('dotenv').config({ path: './server/.env' }); // Load environment variables
+require('dotenv').config(); // Load environment variables
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors({ origin: 'http://206.189.80.118' })); // Update origin to match your server's IP
+app.use(cors({ origin: 'http://152.42.243.146' })); // Update origin to match your server's IP
 app.use(express.json()); // To parse JSON bodies
 
 // Database Connection
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-}).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((err) => {
-  console.error('MongoDB connection error:', err);
-});
+})
+    .then(() => {
+      console.log('Connected to MongoDB');
+    })
+    .catch((err) => {
+      console.error('MongoDB connection error:', err);
+    });
 
 // Routes
 app.use('/api/auth', authRoutes); // Original route
