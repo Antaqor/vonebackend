@@ -5,16 +5,16 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-
 // Registration Route
 router.post('/register', async (req, res) => {
-    const { username, email, phoneNumber, password } = req.body;  // Added email
+    const { username, email, phoneNumber, password } = req.body;
 
     try {
         // Check if the user already exists
         const existingUser = await User.findOne({
-            $or: [{ username }, { email }, { phoneNumber }]  // Added email check
+            $or: [{ username }, { email }, { phoneNumber }]
         });
+
         if (existingUser) {
             return res.status(400).json({ error: 'Username, Email, or Phone Number already in use' });
         }
@@ -34,8 +34,8 @@ router.post('/register', async (req, res) => {
         await newUser.save();
         res.status(201).json({ message: 'User registered successfully!' });
     } catch (err) {
-        console.error('Server error:', err); // Log the error for debugging
-        res.status(500).json({ error: 'Server error, please check logs for more details' });
+        console.error('Server error:', err);
+        res.status(500).json({ error: 'Server error, please try again later' });
     }
 });
 
@@ -56,8 +56,17 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
 
-        // Return user object (which contains the necessary fields)
+        // Generate JWT token
+        const payload = {
+            id: user._id,
+            username: user.username,
+            email: user.email
+        };
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        // Return token and user information
         res.status(200).json({
+            token,
             user: {
                 id: user._id,
                 username: user.username,
@@ -66,7 +75,7 @@ router.post('/login', async (req, res) => {
         });
     } catch (err) {
         console.error('Server error:', err);
-        res.status(500).json({ error: 'Server error, please check logs for more details' });
+        res.status(500).json({ error: 'Server error, please try again later' });
     }
 });
 
