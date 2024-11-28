@@ -28,11 +28,11 @@ app.use('/api/auth', authRoutes); // Authentication routes
 
 // Health Check Routes
 app.get('/', (req, res) => {
-    res.status(200).send('Server is working!');
+    res.status(200).send('Server is working! xD');
 });
 
 app.get('/api', (req, res) => {
-    res.status(200).send('API endpoint is working!');
+    res.status(200).send('API endpoint is working! :)');
 });
 
 // Start the Server
