@@ -50,4 +50,8 @@ router.post('/login', async (req, res) => {
         });
     } catch (err) {
         console.error('Server error:', err);
-        res.status(500).json({ error:
+        res.status(500).json({ error: 'Server error, please try again later' }); // Complete the JSON response
+    }
+});
+
+module.exports = router;
