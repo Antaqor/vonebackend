@@ -1,35 +1,22 @@
-require('dotenv').config();
 const express = require('express');
-const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+
+const router = express.Router();
 
 // Registration Route
 router.post('/register', async (req, res) => {
     const { username, email, phoneNumber, password } = req.body;
 
     try {
-        // Check if the user already exists
-        const existingUser = await User.findOne({
-            $or: [{ username }, { email }, { phoneNumber }]
-        });
-
+        const existingUser = await User.findOne({ $or: [{ username }, { email }, { phoneNumber }] });
         if (existingUser) {
             return res.status(400).json({ error: 'Username, Email, or Phone Number already in use' });
         }
 
-        // Hash the password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        // Create a new user
-        const newUser = new User({
-            username,
-            email,
-            phoneNumber,
-            password: hashedPassword,
-        });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({ username, email, phoneNumber, password: hashedPassword });
 
         await newUser.save();
         res.status(201).json({ message: 'User registered successfully!' });
@@ -44,39 +31,23 @@ router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        // Check if user exists
         const user = await User.findOne({ username });
         if (!user) {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
 
-        // Validate password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
 
-        // Generate JWT token
-        const payload = {
-            id: user._id,
-            username: user.username,
-            email: user.email
-        };
+        const payload = { id: user._id, username: user.username, email: user.email };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        // Return token and user information
         res.status(200).json({
             token,
-            user: {
-                id: user._id,
-                username: user.username,
-                email: user.email,
-            },
+            user: { id: user._id, username: user.username, email: user.email },
         });
     } catch (err) {
         console.error('Server error:', err);
-        res.status(500).json({ error: 'Server error, please try again later' });
-    }
-});
-
-module.exports = router;
+        res.status(500).json({ error:
