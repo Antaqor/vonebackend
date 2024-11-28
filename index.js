@@ -14,19 +14,27 @@ if (!process.env.JWT_SECRET || !process.env.MONGODB_URI) {
 }
 
 // Middleware
-const allowedOrigins = ['http://206.189.80.118', 'http://localhost:3000'];
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',')
+    : ['http://206.189.80.118', '206.189.80.118', 'http://localhost:3000'];
+
 app.use(cors({
     origin: (origin, callback) => {
+        console.log(`CORS request from origin: ${origin}`);
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            callback(new Error('Not allowed by CORS'));
+            callback(new Error(`CORS error: Origin ${origin} not allowed`));
         }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
 }));
 app.use(express.json()); // Parse JSON bodies
+
+app.get('/api/ping', (req, res) => {
+    res.status(200).json({ message: 'Pong! Backend is working.' });
+});
 
 // Database Connection
 const connectDB = async () => {
