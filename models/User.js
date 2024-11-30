@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
-const { Schema, model, models } = mongoose;  // Updated import
+const { Schema, model, models } = mongoose;
 
 const UserSchema = new Schema({
-    username: {  // Changed from name to username for consistency
+    username: {
         type: String,
         required: true,
+        unique: true,
     },
     email: {
         type: String,
@@ -22,6 +23,6 @@ const UserSchema = new Schema({
     },
 }, { timestamps: true });
 
-const User = models.User || model('User', UserSchema);  // Proper model initialization
+const User = models.User || model('User', UserSchema);
 
-module.exports = User;  // Export the User model
+module.exports = User;

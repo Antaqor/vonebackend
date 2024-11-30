@@ -8,33 +8,32 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // Middleware
-app.use(cors({ origin: 'http://206.189.80.118' })); // Update origin to match your server's IP
+app.use(cors({ origin: 'http://206.189.80.118' })); // Ensure the origin matches exactly with your frontend
 app.use(express.json()); // To parse JSON bodies
 
 // Database Connection
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((err) => {
-  console.error('MongoDB connection error:', err);
-});
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => {
+      console.log('Connected to MongoDB');
+    })
+    .catch((err) => {
+      console.error('MongoDB connection error:', err);
+    });
 
 // Routes
-app.use('/api/auth', authRoutes); // Original route
+app.use('/api/auth', authRoutes); // Authentication routes
 
-// Add a root route to check if the server is running
+// Root Route to Check if the Server is Running
 app.get('/', (req, res) => {
   res.send('Server is working!');
 });
 
-// Add a root route to check if the API is accessible
+// API Root to Check if API is Accessible
 app.get('/api', (req, res) => {
   res.send('API endpoint is working!');
 });
 
-// Start the server
+// Start the Server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

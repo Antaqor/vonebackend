@@ -5,16 +5,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-
 // Registration Route
 router.post('/register', async (req, res) => {
-    const { username, email, phoneNumber, password } = req.body;  // Added email
+    const { username, email, phoneNumber, password } = req.body;
 
     try {
-        // Check if the user already exists
-        const existingUser = await User.findOne({
-            $or: [{ username }, { email }, { phoneNumber }]  // Added email check
-        });
+        // Check if user already exists
+        const existingUser = await User.findOne({ $or: [{ username }, { email }, { phoneNumber }] });
         if (existingUser) {
             return res.status(400).json({ error: 'Username, Email, or Phone Number already in use' });
         }
@@ -34,7 +31,7 @@ router.post('/register', async (req, res) => {
         await newUser.save();
         res.status(201).json({ message: 'User registered successfully!' });
     } catch (err) {
-        console.error('Server error:', err); // Log the error for debugging
+        console.error('Server error:', err);
         res.status(500).json({ error: 'Server error, please check logs for more details' });
     }
 });
@@ -56,7 +53,7 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
 
-        // Return user object (which contains the necessary fields)
+        // Return user object
         res.status(200).json({
             user: {
                 id: user._id,
