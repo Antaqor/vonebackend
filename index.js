@@ -6,15 +6,15 @@ const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/post');
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
-// Enable CORS
+// Enable CORS for multiple origins
 app.use(
     cors({
-        origin: 'http://localhost:3000', // Allow frontend requests
+        origin: ['http://localhost:3000', 'http://206.189.80.118'], // Allow multiple origins
         methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
         allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
-        credentials: true,
+        credentials: true, // Allow credentials like cookies
     })
 );
 
