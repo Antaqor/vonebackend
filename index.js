@@ -1,39 +1,61 @@
-require('dotenv').config({ path: './server/.env' }); // Load environment variables
+require('dotenv').config({ path: './server/.env' });
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
+const postRoutes = require('./routes/post');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Middleware
-app.use(cors({ origin: 'http://206.189.80.118' })); // Ensure the origin matches exactly with your frontend
-app.use(express.json()); // To parse JSON bodies
+// Enable CORS
+app.use(
+    cors({
+        origin: 'http://localhost:3000', // Allow frontend requests
+        methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
+        allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
+        credentials: true,
+    })
+);
 
-// Database Connection
-mongoose.connect(process.env.MONGODB_URI)
+// Middleware to parse JSON requests
+app.use(express.json());
+
+// Database connection
+mongoose
+    .connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
     .then(() => {
-      console.log('Connected to MongoDB');
+        console.log('Connected to MongoDB');
     })
     .catch((err) => {
-      console.error('MongoDB connection error:', err);
+        console.error('MongoDB connection error:', err.message);
+        process.exit(1); // Exit server if database connection fails
     });
 
 // Routes
-app.use('/api/auth', authRoutes); // Authentication routes
+app.use('/api/auth', authRoutes);
+app.use('/api/posts', postRoutes);
 
-// Root Route to Check if the Server is Running
+// Test route for server status
 app.get('/', (req, res) => {
-  res.send('Server is working!');
+    res.status(200).send('Server is working!');
 });
 
-// API Root to Check if API is Accessible
-app.get('/api', (req, res) => {
-  res.send('API endpoint is working!');
+// Catch-all route for undefined endpoints
+app.use((req, res) => {
+    res.status(404).json({ error: 'Endpoint not found' });
 });
 
-// Start the Server
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error('Global Error:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+});
+
+// Start server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
 });
