@@ -1,14 +1,14 @@
-const mongoose = require('mongoose');
+// server/models/Post.js
+
+import mongoose from 'mongoose';
+
 const { Schema, model, models } = mongoose;
 
-const PostSchema = new Schema(
-    {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
-        title: { type: String, required: true },
-        content: { type: String, required: true },
-    },
-    { timestamps: true }
-);
+const PostSchema = new Schema({
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+}, { timestamps: true });
 
 const Post = models.Post || model('Post', PostSchema);
-module.exports = Post;
+export default Post;

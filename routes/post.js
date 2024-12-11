@@ -1,11 +1,15 @@
-const express = require('express');
-const Post = require('../models/Post');
+// server/routes/post.js
+
+import express from 'express';
+import Post from '../models/Post.js';
+import authenticateToken from '../middleware/authMiddleware.js';
+
 const router = express.Router();
 
 // Fetch all posts
 router.get('/', async (req, res) => {
     try {
-        const posts = await Post.find(); // Fetch posts from MongoDB
+        const posts = await Post.find().populate('user', 'username'); // Populate user data
         res.status(200).json(posts); // Return posts as JSON
     } catch (err) {
         console.error('Error fetching posts:', err.message);
@@ -13,8 +17,8 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Create a new post
-router.post('/', async (req, res) => {
+// Create a new post (secured route)
+router.post('/', authenticateToken, async (req, res) => {
     const { title, content } = req.body;
 
     if (!title || !content) {
@@ -25,13 +29,15 @@ router.post('/', async (req, res) => {
         const newPost = new Post({
             title,
             content,
-            user: null, // Optional for now
+            user: req.user.id, // Associate post with authenticated user
         });
 
         const savedPost = await newPost.save();
+        const populatedPost = await savedPost.populate('user', 'username'); // Populate user data
+
         res.status(201).json({
             message: 'Post created successfully',
-            post: savedPost,
+            post: populatedPost,
         });
     } catch (err) {
         console.error('Error in POST /api/posts:', err.message);
@@ -39,4 +45,4 @@ router.post('/', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

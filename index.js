@@ -1,20 +1,29 @@
-require('dotenv').config({ path: './server/.env' });
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const authRoutes = require('./routes/auth');
-const postRoutes = require('./routes/post');
+// server/index.js
+
+import 'dotenv/config';
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import authRoutes from './routes/auth.js';
+import postRoutes from './routes/post.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
+
+console.log(`Starting server on port ${PORT}`);
 
 // Enable CORS for multiple origins
 app.use(
     cors({
-        origin: ['http://localhost:3000', 'http://206.189.80.118'], // Allow multiple origins
-        methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
-        allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
-        credentials: true, // Allow credentials like cookies
+        origin: ['http://localhost:3000', 'http://206.189.80.118'], // Add your frontend URL here
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true,
     })
 );
 
