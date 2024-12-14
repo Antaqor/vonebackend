@@ -1,3 +1,5 @@
+// index.js
+
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
@@ -19,7 +21,11 @@ const PORT = process.env.PORT || 5001;
 
 app.use(
     cors({
-        origin: ['http://localhost:3000', 'http://206.189.80.118'],
+        origin: [
+            'http://localhost:3000',
+            'http://206.189.80.118',
+            'http://152.42.243.146:3000' // Add frontend's IP and port if different
+        ],
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true,
@@ -57,6 +63,6 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Internal Server Error' });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on http://0.0.0.0:${PORT}`);
 });
