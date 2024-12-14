@@ -1,4 +1,4 @@
-// index.js
+// Backend: index.js
 
 import 'dotenv/config';
 import express from 'express';
@@ -13,7 +13,7 @@ import postRoutes from './routes/post.js';
 import appointmentRoutes from './routes/appointment.js';
 import notificationRoutes from './routes/notification.js';
 import userRoutes from './routes/user.js';
-import pingRoutes from './routes/ping.js'; // New Ping Route
+import pingRoutes from './routes/ping.js'; // Import Ping Route
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,7 +55,7 @@ app.use('/api/posts', postRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/ping', pingRoutes); // Use Ping Route
+app.use('/api/ping', pingRoutes); // Mount Ping Route
 
 // Root Endpoint
 app.get('/', (req, res) => {
