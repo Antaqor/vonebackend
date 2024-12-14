@@ -1,3 +1,5 @@
+// routes/auth.js
+
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -25,6 +27,7 @@ const upload = multer({
     fileFilter: fileFilter,
 });
 
+// Register Route
 router.post('/register', upload.single('profilePicture'), async (req, res) => {
     const { username, email, phoneNumber, password, role } = req.body;
     const profilePicture = req.file ? req.file.buffer : null;
@@ -64,6 +67,7 @@ router.post('/register', upload.single('profilePicture'), async (req, res) => {
     }
 });
 
+// Login Route
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
@@ -100,6 +104,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// Profile Picture Route
 router.get('/profile-picture/:userId', async (req, res) => {
     const { userId } = req.params;
 
@@ -117,6 +122,7 @@ router.get('/profile-picture/:userId', async (req, res) => {
     }
 });
 
+// Error Handling Middleware
 router.use((err, req, res, next) => {
     if (err) {
         console.error('Unknown Error:', err.message);
