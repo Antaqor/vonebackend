@@ -1,20 +1,28 @@
-import mongoose from 'mongoose';
-
+const mongoose = require('mongoose');
 const { Schema, model, models } = mongoose;
 
 const UserSchema = new Schema({
-    username: { type: String, required: true, unique: true, index: true },
-    email: { type: String, required: true, unique: true, index: true },
-    phoneNumber: { type: String, required: true, unique: true, index: true },
-    password: { type: String, required: true },
-    profilePicture: { type: Buffer },
-    profilePictureType: { type: String },
-    role: {
+    username: {
         type: String,
-        enum: ['user', 'stylist', 'admin'],
-        default: 'user',
+        required: true,
+        unique: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    phoneNumber: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    password: {
+        type: String,
+        required: true,
     },
 }, { timestamps: true });
 
 const User = models.User || model('User', UserSchema);
-export default User;
+
+module.exports = User;
