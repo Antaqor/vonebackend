@@ -1,6 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-
-require('dotenv').config({ path: './server/.env' }); // Load environment variables
+// server/index.js
+require('dotenv').config({ path: './server/.env' });
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -9,8 +8,22 @@ const authRoutes = require('./routes/auth');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+// Define allowed origins
+const allowedOrigins = ['http://localhost:3000', 'http://206.189.80.118']; // Add your frontend URLs here
+
 // Middleware
-app.use(cors({ origin: 'http://206.189.80.118' })); // Ensure the origin matches exactly with your frontend
+app.use(cors({
+    origin: function(origin, callback){
+        // Allow requests with no origin (like mobile apps or curl)
+        if(!origin) return callback(null, true);
+        if(allowedOrigins.indexOf(origin) === -1){
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true, // Allow cookies to be sent
+}));
 app.use(express.json()); // To parse JSON bodies
 
 // Database Connection
