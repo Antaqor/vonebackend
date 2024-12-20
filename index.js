@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+
 require('dotenv').config({ path: './server/.env' }); // Load environment variables
 const express = require('express');
 const mongoose = require('mongoose');
