@@ -27,7 +27,7 @@ app.use('/api/auth', authRoutes); // Authentication routes
 
 // Root Route to Check if the Server is Running
 app.get('/', (req, res) => {
-    res.send('Server is working!');
+    res.send('Server is working im checking !');
 });
 
 // API Root to Check if API is Accessible
