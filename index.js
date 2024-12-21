@@ -1,39 +1,42 @@
-require('dotenv').config({ path: './server/.env' }); // Load environment variables
+require('dotenv').config({ path: './server/.env' });
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+
 const authRoutes = require('./routes/auth');
+const salonRoutes = require('./routes/salon');
+const serviceRoutes = require('./routes/service');
+const stylistRoutes = require('./routes/stylist');
+const appointmentRoutes = require('./routes/appointment');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Middleware
-app.use(cors({ origin: 'http://206.189.80.118' })); // Ensure the origin matches exactly with your frontend
-app.use(express.json()); // To parse JSON bodies
+app.use(cors({
+    origin: ['http://localhost:3000'],
+    credentials: true
+}));
+app.use(express.json());
 
-// Database Connection
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => {
-        console.log('Connected to MongoDB');
-    })
-    .catch((err) => {
-        console.error('MongoDB connection error:', err);
-    });
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((err) => console.error('MongoDB connection error:', err));
 
 // Routes
-app.use('/api/auth', authRoutes); // Authentication routes
+app.use('/api/auth', authRoutes);
+app.use('/api/salons', salonRoutes);
+app.use('/api/services', serviceRoutes);
+app.use('/api/stylists', stylistRoutes);
+app.use('/api/appointments', appointmentRoutes);
 
-// Root Route to Check if the Server is Running
 app.get('/', (req, res) => {
     res.send('Server is working!');
 });
 
-// API Root to Check if API is Accessible
-app.get('/api', (req, res) => {
-    res.send('API endpoint is working!');
-});
-
-// Start the Server
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
