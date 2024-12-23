@@ -1,11 +1,14 @@
-const mongoose = require('mongoose');
-const { Schema, model, models } = mongoose;
+const mongooseSalon = require("mongoose");
+const { Schema: SalonSchemaDef, model: salonModel, models: salonModels } = mongooseSalon;
 
-const SalonSchema = new Schema({
-    name: { type: String, required: true, unique: true },
-    location: { type: String, required: true },
-    owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-}, { timestamps: true });
+const SalonSchema = new SalonSchemaDef(
+    {
+        name: { type: String, required: true, unique: true },
+        location: { type: String, required: true },
+        owner: { type: SalonSchemaDef.Types.ObjectId, ref: "User", required: true },
+    },
+    { timestamps: true }
+);
 
-const Salon = models.Salon || model('Salon', SalonSchema);
+const Salon = salonModels.Salon || salonModel("Salon", SalonSchema);
 module.exports = Salon;
