@@ -18,7 +18,17 @@ const categoryRoutes = require("./routes/category");
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-app.use(cors({ origin: 'http://206.189.80.118' }));
+// CORS setup
+app.use(
+    cors({
+        origin: [
+            "http://localhost:3000",
+            "http://152.42.243.146:3000",
+            "http://206.189.80.118",
+        ],
+        credentials: true,
+    })
+);
 app.use(express.json());
 
 // MongoDB connection

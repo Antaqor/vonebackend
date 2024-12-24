@@ -1,4 +1,5 @@
 // routes/appointment.js
+
 const express = require("express");
 const routerAppointment = express.Router();
 const Appointment = require("../models/Appointment");
@@ -31,15 +32,23 @@ routerAppointment.post("/", authenticateToken, async (req, res) => {
     }
 });
 
-// Get appointments by service
+// Get appointments
 routerAppointment.get("/", authenticateToken, async (req, res) => {
     try {
         const { serviceId } = req.query;
-        if (!serviceId) return res.json([]);
-        const appts = await Appointment.find({ service: serviceId })
+
+        // Build a filter. If `serviceId` is provided, filter by that service;
+        // otherwise, return all appointments.
+        let filter = {};
+        if (serviceId) {
+            filter.service = serviceId;
+        }
+
+        const appts = await Appointment.find(filter)
             .populate("service")
             .populate("user", "username")
             .populate("stylist", "name");
+
         res.json(appts);
     } catch (err) {
         console.error("Error fetching appointments:", err);
