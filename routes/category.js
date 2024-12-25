@@ -1,11 +1,10 @@
-// routes/category.js
 const expressCategory = require("express");
 const routerCategory = expressCategory.Router();
 const Category = require("../models/Category");
 const Service = require("../models/Service");
 const authenticateToken = require("../middleware/authMiddleware");
 
-// Create a new category (only owners or admins)
+// Create a new category
 routerCategory.post("/", authenticateToken, async (req, res) => {
     try {
         if (req.user.role !== "owner") {
@@ -15,10 +14,12 @@ routerCategory.post("/", authenticateToken, async (req, res) => {
         if (!name) {
             return res.status(400).json({ error: "Missing category name" });
         }
+
         const existingCategory = await Category.findOne({ name });
         if (existingCategory) {
             return res.status(400).json({ error: "Category already exists" });
         }
+
         const newCategory = new Category({
             name,
             subServices: Array.isArray(subServices) ? subServices : [],
@@ -42,7 +43,7 @@ routerCategory.get("/", async (req, res) => {
     }
 });
 
-// Get a single category
+// Get single category
 routerCategory.get("/:categoryId", async (req, res) => {
     try {
         const category = await Category.findById(req.params.categoryId);
@@ -56,7 +57,7 @@ routerCategory.get("/:categoryId", async (req, res) => {
     }
 });
 
-// Get services under a specific category
+// Get services for a specific category
 routerCategory.get("/:categoryId/services", async (req, res) => {
     try {
         const { categoryId } = req.params;

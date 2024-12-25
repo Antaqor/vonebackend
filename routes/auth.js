@@ -1,5 +1,3 @@
-// routes/auth.js
-// ===============================================================
 require("dotenv").config();
 const expressAuth = require("express");
 const routerAuth = expressAuth.Router();

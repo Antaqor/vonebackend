@@ -1,5 +1,3 @@
-// routes/appointment.js
-
 const express = require("express");
 const routerAppointment = express.Router();
 const Appointment = require("../models/Appointment");

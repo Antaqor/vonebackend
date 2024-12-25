@@ -1,4 +1,3 @@
-// models/Category.js
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
