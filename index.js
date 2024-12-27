@@ -13,7 +13,8 @@ const serviceRoutes = require("./routes/service");
 const stylistRoutes = require("./routes/stylist");
 const appointmentRoutes = require("./routes/appointment");
 const categoryRoutes = require("./routes/category");
-
+const searchRoutes = require("./routes/search");
+const reviewsRoutes = require("./routes/reviews");
 // Initialize app
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -61,6 +62,8 @@ app.use("/api/services", serviceRoutes);
 app.use("/api/stylists", stylistRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/search", searchRoutes);
+app.use("/api/reviews", reviewsRoutes);
 
 // Simple test route
 app.get("/", (req, res) => {
