@@ -20,17 +20,9 @@ const reviewsRoutes = require("./routes/reviews");
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// CORS setup
-app.use(
-    cors({
-        origin: [
-            "http://localhost:3000",      // or your front-end domain
-            "http://152.42.243.146:3000",
-            "http://206.189.80.118"
-        ],
-        credentials: true,
-    })
-);
+app.use(cors({
+    origin: ['http://206.189.80.118', 'http://152.42.202.14']
+}));
 app.use(express.json());
 
 // Connect to MongoDB
