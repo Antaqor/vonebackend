@@ -1,12 +1,18 @@
-const mongoose = require("mongoose");
-const { Schema, model } = mongoose;
+const mongooseCat = require("mongoose");
+const {
+    Schema: CategorySchemaDef,
+    model: categoryModel,
+    models: categoryModels,
+} = mongooseCat;
 
-const CategorySchema = new Schema(
+const CategorySchema = new CategorySchemaDef(
     {
         name: { type: String, required: true, unique: true },
-        subServices: [{ type: String }],
+        subServices: [String],
     },
     { timestamps: true }
 );
 
-module.exports = model("Category", CategorySchema);
+const Category =
+    categoryModels.Category || categoryModel("Category", CategorySchema);
+module.exports = Category;

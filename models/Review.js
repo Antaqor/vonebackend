@@ -1,32 +1,16 @@
-// models/Review.js
-const mongoose = require("mongoose");
-const { Schema, model, models } = mongoose;
+const mongooseRev = require("mongoose");
+const { Schema: ReviewSchemaDef, model: reviewModel, models: reviewModels } =
+    mongooseRev;
 
-const ReviewSchema = new Schema(
+const ReviewSchema = new ReviewSchemaDef(
     {
-        user: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-        service: {
-            type: Schema.Types.ObjectId,
-            ref: "Service",
-            required: true,
-        },
-        rating: {
-            type: Number,
-            required: true,
-            min: 1,
-            max: 5,
-        },
-        comment: {
-            type: String,
-            default: "",
-        },
+        service: { type: ReviewSchemaDef.Types.ObjectId, ref: "Service", required: true },
+        user: { type: ReviewSchemaDef.Types.ObjectId, ref: "User", required: true },
+        rating: { type: Number, required: true },
+        comment: { type: String, default: "" },
     },
     { timestamps: true }
 );
 
-const Review = models.Review || model("Review", ReviewSchema);
+const Review = reviewModels.Review || reviewModel("Review", ReviewSchema);
 module.exports = Review;

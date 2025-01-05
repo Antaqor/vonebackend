@@ -1,5 +1,6 @@
 const mongooseService = require("mongoose");
-const { Schema: ServiceSchemaDef, model: serviceModel, models: serviceModels } = mongooseService;
+const { Schema: ServiceSchemaDef, model: serviceModel, models: serviceModels } =
+    mongooseService;
 
 const TimeBlockSchema = new ServiceSchemaDef({
     date: { type: Date },

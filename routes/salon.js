@@ -1,5 +1,3 @@
-// routes/salon.js
-// ===============================================================
 const expressSalon = require("express");
 const routerSalon = expressSalon.Router();
 const Salon = require("../models/Salon");
@@ -11,20 +9,34 @@ routerSalon.post("/my-salon", authenticateToken, async (req, res) => {
         if (req.user.role !== "owner") {
             return res.status(403).json({ error: "Only owners" });
         }
-        const { name, location } = req.body;
+
+        const { name, location, about, logo, categoryId, lat, lng } = req.body;
+
         if (!name || !location) {
             return res.status(400).json({ error: "Missing name/location" });
         }
+
         let salon = await Salon.findOne({ owner: req.user.id });
+
         if (salon) {
+            // Update existing
             salon.name = name;
             salon.location = location;
+            salon.about = about || "";
+            salon.logo = logo || "";
+            salon.category = categoryId || null;
+            // If you want, store lat/lng in your schema if you have those fields
+
             await salon.save();
             return res.status(200).json(salon);
         } else {
+            // Create new
             const newSalon = new Salon({
                 name,
                 location,
+                about: about || "",
+                logo: logo || "",
+                category: categoryId || null,
                 owner: req.user.id,
             });
             await newSalon.save();

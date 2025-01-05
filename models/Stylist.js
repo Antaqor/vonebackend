@@ -1,6 +1,9 @@
 const mongooseStylist = require("mongoose");
-const { Schema: StylistSchemaDef, model: stylistModel, models: stylistModels } =
-    mongooseStylist;
+const {
+    Schema: StylistSchemaDef,
+    model: stylistModel,
+    models: stylistModels,
+} = mongooseStylist;
 
 const StylistSchema = new StylistSchemaDef(
     {
@@ -10,6 +13,5 @@ const StylistSchema = new StylistSchemaDef(
     { timestamps: true }
 );
 
-const Stylist =
-    stylistModels.Stylist || stylistModel("Stylist", StylistSchema);
+const Stylist = stylistModels.Stylist || stylistModel("Stylist", StylistSchema);
 module.exports = Stylist;

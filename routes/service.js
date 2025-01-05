@@ -1,11 +1,9 @@
-// routes/service.js
-// =======================================================================
 const express = require("express");
 const routerService = express.Router();
 const authenticateToken = require("../middleware/authMiddleware");
 const Service = require("../models/Service");
 const Salon = require("../models/Salon");
-const Review = require("../models/Review")
+const Review = require("../models/Review");
 
 // (1) CREATE SERVICE (owner only)
 routerService.post("/my-service", authenticateToken, async (req, res) => {
@@ -27,7 +25,7 @@ routerService.post("/my-service", authenticateToken, async (req, res) => {
             durationMinutes: durationMinutes || 30,
             price: price || 50,
             stylistTimeBlocks: [],
-            category: categoryId || null, // optional link to Category
+            category: categoryId || null,
         });
 
         await newService.save();
@@ -108,7 +106,6 @@ routerService.get("/:serviceId", async (req, res) => {
 });
 
 // (5) GET DAY-LEVEL AVAILABILITY
-//     /api/services/:serviceId/availability?date=YYYY-MM-DD
 routerService.get("/:serviceId/availability", async (req, res) => {
     try {
         const { serviceId } = req.params;
@@ -141,7 +138,6 @@ routerService.get("/:serviceId/availability", async (req, res) => {
                 });
             }
         }
-
         return res.json(resultBlocks);
     } catch (err) {
         console.error("Error fetching availability:", err);
@@ -149,7 +145,7 @@ routerService.get("/:serviceId/availability", async (req, res) => {
     }
 });
 
-// (6) GET MONTH-BASED AVAILABILITY (optional advanced feature)
+// (6) GET MONTH-BASED AVAILABILITY
 routerService.get("/:serviceId/month-availability", async (req, res) => {
     try {
         const { serviceId } = req.params;
@@ -176,14 +172,11 @@ routerService.get("/:serviceId/month-availability", async (req, res) => {
 
             if (checkDate < now) {
                 status = "past";
-            }
-            // Random logic for demo:
-            else if (Math.random() < 0.1) {
+            } else if (Math.random() < 0.1) {
                 status = "fullyBooked";
             } else if (Math.random() < 0.2) {
                 status = "goingFast";
             }
-
             days.push({ day: d, status });
         }
 
@@ -201,14 +194,13 @@ routerService.get("/:serviceId/month-availability", async (req, res) => {
 // (7) GET ALL SERVICES (public)
 routerService.get("/", async (req, res) => {
     try {
-        // 1) Fetch all services
         const services = await Service.find().populate("salon");
         if (!services.length) return res.json([]);
 
-        // 2) Collect service IDs
+        // Collect IDs
         const serviceIds = services.map((s) => s._id);
 
-        // 3) Use MongoDB aggregate to compute avg rating, count per service
+        // Use MongoDB aggregate to compute avg rating, count per service
         const ratings = await Review.aggregate([
             { $match: { service: { $in: serviceIds } } },
             {
@@ -220,7 +212,6 @@ routerService.get("/", async (req, res) => {
             },
         ]);
 
-        // Turn into a map for quick lookup
         const ratingMap = {};
         ratings.forEach((r) => {
             ratingMap[r._id.toString()] = {
@@ -229,7 +220,7 @@ routerService.get("/", async (req, res) => {
             };
         });
 
-        // 4) Attach rating info to each service
+        // Attach rating info to each service
         const finalServices = services.map((svc) => {
             const ratingInfo = ratingMap[svc._id.toString()] || { averageRating: 0, reviewCount: 0 };
             return {
@@ -245,7 +236,5 @@ routerService.get("/", async (req, res) => {
         return res.status(500).json({ error: "Server error" });
     }
 });
-
-
 
 module.exports = routerService;

@@ -1,5 +1,3 @@
-// routes/stylist.js
-// ===============================================================
 const expressStylist = require("express");
 const routerStylist = expressStylist.Router();
 const Stylist = require("../models/Stylist");

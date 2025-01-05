@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
-// Models
+// Models (some might not be used directly here, but ensuring they’re required/initialized)
 const Category = require("./models/Category");
 
 // Routes
@@ -15,11 +15,22 @@ const appointmentRoutes = require("./routes/appointment");
 const categoryRoutes = require("./routes/category");
 const searchRoutes = require("./routes/search");
 const reviewsRoutes = require("./routes/reviews");
+
 // Initialize app
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-app.use(cors({ origin: 'http://206.189.80.118' }));
+// CORS setup
+app.use(
+    cors({
+        origin: [
+            "http://localhost:3000",      // or your front-end domain
+            "http://152.42.243.146:3000",
+            "http://206.189.80.118"
+        ],
+        credentials: true,
+    })
+);
 app.use(express.json());
 
 // Connect to MongoDB
@@ -67,7 +78,7 @@ app.use("/api/reviews", reviewsRoutes);
 
 // Simple test route
 app.get("/", (req, res) => {
-    res.send("Server is working! 1");
+    res.send("Server is working!");
 });
 
 // Start server
