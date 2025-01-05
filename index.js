@@ -21,8 +21,14 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 app.use(cors({
-    origin: ['http://206.189.80.118', 'http://152.42.202.14']
+    origin: [
+        'http://206.189.80.118',
+        'http://152.42.202.14:3000',
+        'http://localhost:3000'
+    ]
 }));
+
+
 app.use(express.json());
 
 // Connect to MongoDB
