@@ -1,4 +1,3 @@
-// server.js (or index.js)
 require("dotenv").config({ path: "./server/.env" });
 const express = require("express");
 const mongoose = require("mongoose");
@@ -21,20 +20,18 @@ const reviewsRoutes = require("./routes/reviews");
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// CORS
-app.use(
-    cors({
-        origin: [
-            "http://localhost:3000",
-            // your deployed frontends
-            "http://152.42.243.146:3000",
-            "http://206.189.80.118",
-        ],
-        credentials: true,
-    })
-);
-app.use(express.json({ limit: "10mb" }));
+app.use(cors({
+    origin: [
+        'http://206.189.80.118',
+        'http://152.42.202.14:3000',
+        'http://localhost:3000'
+    ]
+}));
 
+
+app.use(express.json());
+
+// Connect to MongoDB
 mongoose
     .connect(process.env.MONGODB_URI, {
         useNewUrlParser: true,
