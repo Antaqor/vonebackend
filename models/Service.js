@@ -1,29 +1,29 @@
-const mongooseService = require("mongoose");
-const { Schema: ServiceSchemaDef, model: serviceModel, models: serviceModels } =
-    mongooseService;
+// ==========================================
+// models/Service.js (unchanged from your code)
+// ==========================================
+const mongoose = require("mongoose");
+const { Schema, model, models } = mongoose;
 
-const TimeBlockSchema = new ServiceSchemaDef({
+const TimeBlockSchema = new Schema({
     date: { type: Date },
-    label: { type: String },
+    label: { type: String, default: "Custom" },
     times: [{ type: String }],
 });
 
-const StylistBlockSchema = new ServiceSchemaDef({
-    stylist: { type: ServiceSchemaDef.Types.ObjectId, ref: "Stylist", default: null },
+const StylistBlockSchema = new Schema({
+    stylist: { type: Schema.Types.ObjectId, ref: "Stylist", default: null },
     timeBlocks: [TimeBlockSchema],
 });
 
-const ServiceSchema = new ServiceSchemaDef(
+const ServiceSchema = new Schema(
     {
-        salon: { type: ServiceSchemaDef.Types.ObjectId, ref: "Salon", required: true },
+        salon: { type: Schema.Types.ObjectId, ref: "Salon", required: true },
         name: { type: String, required: true },
         durationMinutes: { type: Number, required: true },
         price: { type: Number, required: true },
         stylistTimeBlocks: [StylistBlockSchema],
-
-        // Link to Category. Example: category: "ObjectId('...')"
         category: {
-            type: ServiceSchemaDef.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: "Category",
             default: null,
         },
@@ -31,5 +31,5 @@ const ServiceSchema = new ServiceSchemaDef(
     { timestamps: true }
 );
 
-const Service = serviceModels.Service || serviceModel("Service", ServiceSchema);
+const Service = models.Service || model("Service", ServiceSchema);
 module.exports = Service;

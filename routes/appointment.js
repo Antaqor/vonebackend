@@ -1,23 +1,36 @@
-// routes/appointment.js
+// /routes/appointment.js
 const express = require("express");
 const routerAppointment = express.Router();
 const Appointment = require("../models/Appointment");
 const authenticateToken = require("../middleware/authMiddleware");
-const Salon = require("../models/Salon");
 const Service = require("../models/Service");
+const Salon = require("../models/Salon");
 
-// (1) CREATE an appointment (for any authenticated user)
+/**
+ * POST /api/appointments
+ * Creates an appointment (any authenticated user).
+ */
 routerAppointment.post("/", authenticateToken, async (req, res) => {
     try {
         const { serviceId, date, startTime, stylistId, status } = req.body;
-
         if (!serviceId || !date || !startTime) {
-            return res.status(400).json({ error: "Missing required fields" });
+            return res
+                .status(400)
+                .json({ error: "Missing fields: serviceId, date, startTime." });
         }
-        const userId = req.user.id; // The authenticated user's ID
 
-        // If stylistId is provided, it references a user with role="stylist"
-        // If omitted, it remains null
+        const userId = req.user.id;
+        if (!userId) {
+            return res.status(401).json({ error: "Invalid token: no user ID." });
+        }
+
+        // Check that the service actually exists
+        const service = await Service.findById(serviceId);
+        if (!service) {
+            return res.status(404).json({ error: "Service not found." });
+        }
+
+        // Create appointment
         const appt = new Appointment({
             user: userId,
             service: serviceId,
@@ -34,47 +47,44 @@ routerAppointment.post("/", authenticateToken, async (req, res) => {
         });
     } catch (err) {
         console.error("Error creating appointment:", err);
-        return res.status(500).json({ error: "Server error" });
+        return res
+            .status(500)
+            .json({ error: "Server error creating appointment" });
     }
 });
 
-// (2) GET appointments
+/**
+ * GET /api/appointments
+ * Different data returned for owner/stylist/normal user.
+ */
 routerAppointment.get("/", authenticateToken, async (req, res) => {
     try {
-        // A) If the requester is an OWNER => show all appointments for that owner's single salon
+        // A) If OWNER => show all appts for that owner's single salon
         if (req.user.role === "owner") {
             const salon = await Salon.findOne({ owner: req.user.id });
             if (!salon) {
-                // If the owner has no salon, return empty
                 return res.json([]);
             }
-
-            // 1) Find services for that salon
             const services = await Service.find({ salon: salon._id });
             const serviceIds = services.map((s) => s._id);
 
-            // 2) Return appointments for those service IDs
             const appts = await Appointment.find({ service: { $in: serviceIds } })
                 .populate("service", "name")
                 .populate("user", "username phoneNumber")
                 .populate("stylist", "username phoneNumber");
-            // <-- 'stylist' references a user doc with role="stylist"
-
             return res.json(appts);
         }
 
-        // B) If the requester is a STYLIST => show only appointments assigned to them
+        // B) If STYLIST => show only assigned
         if (req.user.role === "stylist") {
-            // The 'stylist' field is a user ID with role="stylist"
             const appts = await Appointment.find({ stylist: req.user.id })
                 .populate("service", "name")
                 .populate("user", "username phoneNumber")
                 .populate("stylist", "username phoneNumber");
-
             return res.json(appts);
         }
 
-        // C) If normal USER => show only that user's appointments
+        // C) Normal user => their own
         const userId = req.user.id;
         const userAppts = await Appointment.find({ user: userId })
             .populate("service", "name")
@@ -84,7 +94,7 @@ routerAppointment.get("/", authenticateToken, async (req, res) => {
         return res.json(userAppts);
     } catch (err) {
         console.error("Error fetching appointments:", err);
-        return res.status(500).json({ error: "Server error" });
+        return res.status(500).json({ error: "Server error fetching appointments" });
     }
 });
 
