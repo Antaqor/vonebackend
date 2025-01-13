@@ -16,7 +16,17 @@ const paymentRoutes = require("./routes/payment");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
-app.use(cors({ origin: ["http://128.199.231.254","http://152.42.202.14:3000","http://localhost:3000"] }));
+app.use(
+    cors({
+        origin: [
+            "http://128.199.231.254",
+            "http://152.42.202.14:3000",
+            "http://localhost:3000",
+            "http://foru.mn"
+        ],
+    })
+);
+
 app.use(express.json());
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
