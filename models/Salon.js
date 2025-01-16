@@ -1,3 +1,4 @@
+// models/Salon.js
 const mongooseSalon = require("mongoose");
 const { Schema: SalonSchemaDef, model: salonModel, models: salonModels } = mongooseSalon;
 

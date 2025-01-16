@@ -1,11 +1,12 @@
+// routes/salon.js
 const expressSalon = require("express");
 const routerSalon = expressSalon.Router();
 const SalonModel = require("../models/Salon");
-const authenticateToken = require("../middleware/authMiddleware"); // renamed for consistency
+const authenticateToken = require("../middleware/authMiddleware");
 
 /**
- * Create or update "my salon" for an owner.
  * POST /api/salons/my-salon
+ * Create or update an owner’s salon
  */
 routerSalon.post("/my-salon", authenticateToken, async (req, res) => {
     try {
@@ -28,7 +29,7 @@ routerSalon.post("/my-salon", authenticateToken, async (req, res) => {
         if (!name || !location) {
             return res
                 .status(400)
-                .json({ error: "Missing required fields: 'name' and 'location'" });
+                .json({ error: "Missing required fields: 'name'/'location'" });
         }
 
         let salon = await SalonModel.findOne({ owner: req.user.id });
@@ -41,22 +42,15 @@ routerSalon.post("/my-salon", authenticateToken, async (req, res) => {
             salon.logo = logo || "";
             salon.coverImage = coverImage || "";
             salon.category = categoryId || null;
-
-            if (hoursOfOperation) {
-                salon.hoursOfOperation = hoursOfOperation;
-            }
-            if (lat !== undefined) {
-                salon.lat = lat;
-            }
-            if (lng !== undefined) {
-                salon.lng = lng;
-            }
+            if (hoursOfOperation) salon.hoursOfOperation = hoursOfOperation;
+            if (lat !== undefined) salon.lat = lat;
+            if (lng !== undefined) salon.lng = lng;
 
             await salon.save();
             return res.status(200).json(salon);
         }
 
-        // Or create new
+        // Otherwise create new
         const newSalon = new SalonModel({
             name,
             location,
@@ -70,7 +64,6 @@ routerSalon.post("/my-salon", authenticateToken, async (req, res) => {
             lng: lng || null,
         });
         await newSalon.save();
-
         return res.status(201).json(newSalon);
     } catch (err) {
         console.error("Error in POST /my-salon:", err);
@@ -80,14 +73,13 @@ routerSalon.post("/my-salon", authenticateToken, async (req, res) => {
 
 /**
  * GET /api/salons/my-salon
- * Only owners see their own salon data
+ * Only owners see their own salon
  */
 routerSalon.get("/my-salon", authenticateToken, async (req, res) => {
     try {
         if (req.user.role !== "owner") {
-            return res.status(403).json({ error: "Only owners allowed" });
+            return res.status(403).json({ error: "Only owners" });
         }
-
         const salon = await SalonModel.findOne({ owner: req.user.id });
         if (!salon) {
             return res.status(404).json({ error: "No salon found" });
@@ -101,7 +93,7 @@ routerSalon.get("/my-salon", authenticateToken, async (req, res) => {
 
 /**
  * GET /api/salons
- * Public route to list all salons
+ * Public list of all salons
  */
 routerSalon.get("/", async (req, res) => {
     try {
@@ -115,7 +107,7 @@ routerSalon.get("/", async (req, res) => {
 
 /**
  * GET /api/salons/:id
- * Public route to fetch a single salon by ID
+ * Public fetch a single salon
  */
 routerSalon.get("/:id", async (req, res) => {
     try {

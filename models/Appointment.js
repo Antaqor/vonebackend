@@ -1,3 +1,4 @@
+// models/Appointment.js
 const mongooseApt = require("mongoose");
 const { Schema: AptSchemaDef, model: aptModel, models: aptModels } = mongooseApt;
 
