@@ -67,6 +67,7 @@ async function seedCategories() {
         }
     }
 }
+console.log("MONGODB_URI:", process.env.MONGODB_URI);
 
 // Register routes
 app.use("/api/auth", authRoutes);
