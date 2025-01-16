@@ -15,4 +15,5 @@ const CategorySchema = new CategorySchemaDef(
 
 const Category =
     categoryModels.Category || categoryModel("Category", CategorySchema);
+
 module.exports = Category;

@@ -1,9 +1,12 @@
-// server/index.js (showing only the relevant addition at the bottom)
 require("dotenv").config({ path: "./server/.env" });
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+
+// Models
 const Category = require("./models/Category");
+
+// Routes
 const authRoutes = require("./routes/auth");
 const salonRoutes = require("./routes/salon");
 const serviceRoutes = require("./routes/service");
@@ -16,35 +19,46 @@ const paymentRoutes = require("./routes/payment");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
+
 app.use(
     cors({
         origin: [
             "http://128.199.231.254",
             "http://152.42.202.14:3000",
+            "http://68.183.191.149",
             "http://localhost:3000",
-            "http://foru.mn"
+            "http://foru.mn",
         ],
     })
 );
 
 app.use(express.json());
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose
+    .connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        // useFindAndModify: false, // Not necessary in Mongoose v6+
+        // useCreateIndex: true,    // Same as above
+    })
     .then(async () => {
         console.log("Connected to MongoDB");
-        await seedCategories();
+        await seedCategories(); // optional seeding
     })
-    .catch((err) => console.error("MongoDB error:", err));
+    .catch((err) => {
+        console.error("MongoDB error:", err);
+    });
 
 async function seedCategories() {
     const defaultCategories = [
-        { name: "Hair", subServices: ["Cut","Color","Highlights"] },
-        { name: "Barber", subServices: ["Haircut","Beard Trim"] },
-        { name: "Nail", subServices: ["Manicure","Pedicure","Gel Polish"] },
-        { name: "Beauty", subServices: ["Facial","Makeup","Skincare"] },
-        { name: "Lash", subServices: ["Classic Extensions","Volume Extensions"] },
-        { name: "Tattoo", subServices: ["Small Tattoo","Large Tattoo","Touch-up"] },
+        { name: "Hair", subServices: ["Cut", "Color", "Highlights"] },
+        { name: "Barber", subServices: ["Haircut", "Beard Trim"] },
+        { name: "Nail", subServices: ["Manicure", "Pedicure", "Gel Polish"] },
+        { name: "Beauty", subServices: ["Facial", "Makeup", "Skincare"] },
+        { name: "Lash", subServices: ["Classic Extensions", "Volume Extensions"] },
+        { name: "Tattoo", subServices: ["Small Tattoo", "Large Tattoo", "Touch-up"] },
     ];
+
     for (const cat of defaultCategories) {
         const existing = await Category.findOne({ name: cat.name });
         if (!existing) {
@@ -54,6 +68,7 @@ async function seedCategories() {
     }
 }
 
+// Register routes
 app.use("/api/auth", authRoutes);
 app.use("/api/salons", salonRoutes);
 app.use("/api/services", serviceRoutes);
@@ -65,4 +80,5 @@ app.use("/api/reviews", reviewsRoutes);
 app.use("/api/payments", paymentRoutes);
 
 app.get("/", (req, res) => res.send("Server is working!"));
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

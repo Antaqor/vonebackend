@@ -13,5 +13,7 @@ const StylistSchema = new StylistSchemaDef(
     { timestamps: true }
 );
 
-const Stylist = stylistModels.Stylist || stylistModel("Stylist", StylistSchema);
+const Stylist =
+    stylistModels.Stylist || stylistModel("Stylist", StylistSchema);
+
 module.exports = Stylist;
