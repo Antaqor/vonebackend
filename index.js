@@ -28,6 +28,7 @@ app.use(
             "http://68.183.191.149",
             "http://localhost:3000",
             "http://foru.mn",
+            "http://salon.foru.mn",
         ],
     })
 );
