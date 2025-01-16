@@ -24,7 +24,7 @@ app.use(
     cors({
         origin: [
             "http://128.199.231.254",
-            "http://152.42.202.14:3000",
+            "http://152.42.185.20",
             "http://68.183.191.149",
             "http://localhost:3000",
             "http://foru.mn",
