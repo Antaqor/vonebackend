@@ -15,6 +15,52 @@ function isValidEmail(email) {
 function isValidPhoneNumber(phone) {
     return /^[0-9]{8,12}$/.test(phone);
 }
+// Middleware to verify JWT
+function verifyToken(req, res, next) {
+    // Usually the token is sent in the Authorization header as "Bearer <token>"
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({ error: "No token provided" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+        return res.status(401).json({ error: "Malformed token" });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET || "change-me", (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ error: "Invalid token" });
+        }
+        // Attach user info to req
+        req.user = decoded; // { id, username, email, role, iat, exp }
+        next();
+    });
+}
+
+/**
+ * GET /api/auth/profile
+ * Protected route to get the current user's profile information.
+ */
+router.get("/profile", verifyToken, async (req, res) => {
+    try {
+        // req.user was set by verifyToken middleware
+        const userId = req.user.id;
+
+        const user = await UserModel.findById(userId).select("username phoneNumber");
+        if (!user) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        res.status(200).json({
+            username: user.username,
+            phoneNumber: user.phoneNumber,
+        });
+    } catch (err) {
+        console.error("Profile fetch error:", err);
+        res.status(500).json({ error: "Server error fetching profile." });
+    }
+});
 
 /**
  * POST /api/auth/register
@@ -139,6 +185,7 @@ router.post("/login", async (req, res) => {
                 username: user.username,
                 email: user.email,
                 role: user.role,
+                accessToken: token
             },
             token,
         });

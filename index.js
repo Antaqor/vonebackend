@@ -16,6 +16,7 @@ const categoryRoutes = require("./routes/category");
 const searchRoutes = require("./routes/search");
 const reviewsRoutes = require("./routes/reviews");
 const paymentRoutes = require("./routes/payment");
+const notificationsRoute = require("./routes/notifications");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -80,6 +81,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/notifications", notificationsRoute);
 
 app.get("/", (req, res) => res.send("Server is working!"));
 
