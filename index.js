@@ -53,12 +53,13 @@ mongoose
 
 async function seedCategories() {
     const defaultCategories = [
-        { name: "Hair", subServices: ["Cut", "Color", "Highlights"] },
-        { name: "Barber", subServices: ["Haircut", "Beard Trim"] },
-        { name: "Nail", subServices: ["Manicure", "Pedicure", "Gel Polish"] },
-        { name: "Beauty", subServices: ["Facial", "Makeup", "Skincare"] },
-        { name: "Lash", subServices: ["Classic Extensions", "Volume Extensions"] },
-        { name: "Tattoo", subServices: ["Small Tattoo", "Large Tattoo", "Touch-up"] },
+        { name: "Үс арчилгаа", subServices: ["Cut", "Color", "Highlights"] },
+        { name: "Эрэгтэй үс", subServices: ["Haircut", "Beard Trim"] },
+        { name: "Нүүр будалт", subServices: ["Haircut", "Beard Trim"] },
+        { name: "Сормууё", subServices: ["Manicure", "Pedicure", "Gel Polish"] },
+        { name: "Гоо сайхан", subServices: ["Facial", "Makeup", "Skincare"] },
+        { name: "Хумс", subServices: ["Classic Extensions", "Volume Extensions"] },
+        { name: "Шивээс", subServices: ["Small Tattoo", "Large Tattoo", "Touch-up"] },
     ];
 
     for (const cat of defaultCategories) {
