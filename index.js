@@ -28,7 +28,7 @@ app.use(
             "http://152.42.185.20",
             "http://68.183.191.149",
             "http://localhost:3000",
-            "http://foru.mn",
+            "https://foru.mn",
             "http://salon.foru.mn",
         ],
     })
