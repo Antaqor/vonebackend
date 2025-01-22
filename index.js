@@ -24,12 +24,10 @@ const PORT = process.env.PORT || 5001;
 app.use(
     cors({
         origin: [
+            "https://foru.mn",
             "http://128.199.231.254",
-            "http://152.42.185.20",
             "http://68.183.191.149",
             "http://localhost:3000",
-            "https://foru.mn",
-            "http://salon.foru.mn",
         ],
     })
 );
